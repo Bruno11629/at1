@@ -1,5 +1,5 @@
-#Prezado(a), estou disponibilizando este codigo para que você possa ter alguma orientacao
-#na hora de implementar seu codigo, no entanto peco que não copie e envie meu codigo, neste
+#Prezado(a), estou disponibilizando este código para que você possa ter alguma orientação
+#na hora de implementar o seu. No entanto, peço que não copie e envie meu codigo, neste
 #caso ambos tiraremos zero e de nada adiantara enviar. Espero ter ajudado. 
 # Grato, Bruno da Costa Peixoto 
 
