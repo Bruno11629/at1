@@ -1,3 +1,9 @@
+#Prezado(a), estou disponibilizando este codigo para que você possa ter alguma orientacao
+#na hora de implementar seu codigo, no entanto peco que não copie e envie meu codigo, neste
+#caso ambos tiraremos zero e de nada adiantara enviar. Espero ter ajudado. 
+# Grato, Bruno da Costa Peixoto 
+
+
 #O codigo presume que a pasta at1, possui o mesmo conteudo 
 #e mesma ordenacao daquela disponivel na descricao da atividade
 
@@ -136,11 +142,56 @@ f.theta= function(theta,Y_vec,centros){
   return(L)
 }
 
+#otimizando
 mu=mean(Y_vec$Precipitacao[!is.na(Y_vec$Precipitacao)])
-phi.t=0.1
-phi.s=1000
+phi.t=10
+phi.s=10000
 sigma2=1000
 
 theta_hat=optim(c(mu,sigma2,phi.t,phi.s), f.theta,Y_vec=Y_vec,centros= centros)
+
+#aplicando os valores de theta
+mu= theta_hat$par[1]
+sigma2= theta_hat$par[2]
+phi.t= theta_hat$par[3]
+phi.s= theta_hat$par[4]
+
+sigma.T= matrix(nrow=36,ncol = 36)
+for(i in 1:36){
+  for(j in 1:36){
+    sigma.T[i,j]= sigma2*exp(-abs(i-j)/phi.t) 
+  }
+}
+sigma.S= matrix(nrow = 14, ncol = 14)
+for(i in 1:14){
+  for(j in 1:14){
+    sigma.S[i,j]= exp(-distHaversine(c(centros$Longitude[i],centros$Latitude[i]),
+                                     c(centros$Longitude[j],centros$Latitude[j]))/phi.s )
+  }
+}
+
+inv_sigma_hat= solve(sigma.S %x% sigma.T)
+
+#novos valores
+S_novo= c(-47.0738,-22.9329)
+sigma.S_novo= matrix(ncol = 14) 
+for(i in 1:14){
+  sigma.S_novo[,i]= exp(-distHaversine(c(centros$Longitude[i],centros$Latitude[i]),S_novo)/phi.s )
+}
+sigma_novo= sigma.S_novo %x% sigma.T
+
+#calculando as predicoes
+y=Y_vec$Precipitacao[!is.na(Y_vec$Precipitacao)]
+produto= sigma_novo %*% inv_sigma_hat
+y_novo= mu + produto[,!is.na(Y_vec$Precipitacao)] %*%(y-mu)
+
+write(y_novo,file = "116297campinas.txt",sep = ",")
+
+
+
+
+
+
+
 
 
